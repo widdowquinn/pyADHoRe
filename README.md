@@ -2,7 +2,7 @@
 
 ## Overview
 
-`pyADHoRe` is a module that provides a basic data object and parser for manipulating and processing output of the [i-ADHoRe 3,0](http://bioinformatics.psb.ugent.be/software/details/i--ADHoRe) bioinformatics tool into Python.
+`pyADHoRe` is a module that provides a basic data object and parser for manipulating and processing output of the [i-ADHoRe 3.0](http://bioinformatics.psb.ugent.be/software/details/i--ADHoRe) bioinformatics tool into Python.
 
 i-ADHoRe 3.0 has a complex output structure, and the software comes with a documented Perl API. There is no corresponding API for Python. This module is intended to enable additional analysis and visualisation of i-ADHore output data using Python.
 
@@ -13,17 +13,17 @@ i-ADHoRe 3.0 has a complex output structure, and the software comes with a docum
 
 >For more information on the i-ADHoRe algorithm please refer to the [i-ADHoRe publication](#publication), and software manual, which is included in the i-ADHoRe download.
 
-The data stucture of i-ADHoRe's output centres around *multiplicons*, which are mutually homologous segments of the input sequences. These are generated in i-ADHoRe 3.0 by an iterative process that generates a branching tree of progressively more refined multiplicons at distinct 'levels', which represent the number of input genomes that contribute to the region. The result of this process is recorded in the output plain text tab-separated tabular file `multiplicons.txt`.
+The data stucture of i-ADHoRe's output centres around *multiplicons*, which are mutually homologous segments of the input sequences. These are generated in i-ADHoRe 3.0 by an iterative process that generates a branching tree of progressively more refined multiplicons at distinct 'levels', which broadly represent the number of alignments that contribute to the region. The result of this process is recorded in the output plain text tab-separated tabular file `multiplicons.txt`.
 
 `multiplicons.txt` describes all multiplicons generated during the analysis, including a large number of redundant multiplicons. Each multiplicon is assigned to a row in the table, and gets a unique ID in the `id` column. The `parent` column in each row refers to this ID, and the branching process that generates all multiplicons is easily reconstructed as a tree from this information. The root node of each tree corresponds to a "level 2" multiplicon. Leaf nodes (which have no children because no other homologous segment could be added to the stack) correspond to the "final" multiplicons.
 
-The `segments.txt` output file is a plain test tab-separated file describing the regions of each inout genome that participate in each multiplicon, in terms of contigous aligned genes. Each row in the table represents an input genome region, with a unique ID in the column `id`, and defined by the first and last gene to contribute to that region. 
+The `segments.txt` output file is a plain text tab-separated file describing the regions of each inout genome that participate in each multiplicon, in terms of contigous aligned genes. Each row in the table represents an input genome region, with a unique ID in the column `id`, and defined by the first and last gene to contribute to that region. 
 
 Each multiplicon corresponds to at least two regions in the `segments.txt` file, and the unique multiplicon ID is indicated in the column `multiplicon`, allowing for cross-reference against the multiplicon tree.
 
 ### Parsing
 
-The object model is constructed around a directed graph that represents the multiplicon tree, using the `network.DiGraph()` object. Nodes represent multiplicons, and each edge represents a parent-child relationship. A local [SQLite](http://www.sqlite.org/) database is constructed (in emory, by default) to hold multiplicon attributes, obtained from the `multiplicons.txt` and `segments.txt` files, and enable fast querying.
+The object model is constructed around a directed graph that represents the multiplicon tree, using the `network.DiGraph()` object. Nodes represent multiplicons, and each edge represents a parent-child relationship. A local [SQLite](http://www.sqlite.org/) database is constructed (in memory, by default) to hold multiplicon attributes, obtained from the `multiplicons.txt` and `segments.txt` files, and enable fast querying.
 
 ## Example usage
 
