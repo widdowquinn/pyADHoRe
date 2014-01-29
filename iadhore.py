@@ -261,7 +261,7 @@ class IadhoreData(object):
 # Testing
 if __name__ == '__main__':
 
-    # i-adhore test dataset I
+    # i-adhore test dataset II
     mf = os.path.join('testdata', 'datasetII', 'multiplicons.txt')
     sf = os.path.join('testdata', 'datasetII', 'segments.txt')
 
@@ -281,7 +281,7 @@ if __name__ == '__main__':
     intermediates = list(data.get_multiplicon_intermediates())
     print "Intermediates: %d %s" % (len(intermediates), intermediates[:50])
 
-    print data.get_multiplicon_properties(1)
+    print data.get_multiplicon_properties(8)
 
     print data.get_multiplicon_segments(28)
 
