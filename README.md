@@ -8,22 +8,9 @@ i-ADHoRe 3.0 has a complex output structure, and the software comes with a docum
 
 * <a name="publication">i-ADHoRe 3.0 publication</a>: Simillion, C., Janssens, K., Sterck, L., Van de Peer, Y. (2008) i-ADHoRe 2.0: An improved tool to detect degenerated genomic homology using genomic profiles. *Bioinformatics* **24**, 127-8. [http://dx.doi.org/doi:10.1093/bioinformatics/btm449](http://dx.doi.org/doi:10.1093/bioinformatics/btm449)
 
-## i-ADHoRe output
-### Data structure
+## Dependencies 
 
->For more information on the i-ADHoRe algorithm please refer to the [i-ADHoRe publication](#publication), and software manual, which is included in the i-ADHoRe download.
-
-The data stucture of i-ADHoRe's output centres around *multiplicons*, which are mutually homologous segments of the input sequences. These are generated in i-ADHoRe 3.0 by an iterative process that generates a branching tree of progressively more refined multiplicons at distinct 'levels', which broadly represent the number of alignments that contribute to the region. The result of this process is recorded in the output plain text tab-separated tabular file `multiplicons.txt`.
-
-`multiplicons.txt` describes all multiplicons generated during the analysis, including a large number of redundant multiplicons. Each multiplicon is assigned to a row in the table, and gets a unique ID in the `id` column. The `parent` column in each row refers to this ID, and the branching process that generates all multiplicons is easily reconstructed as a tree from this information. The root node of each tree corresponds to a "level 2" multiplicon. Leaf nodes (which have no children because no other homologous segment could be added to the stack) correspond to the "final" multiplicons.
-
-The `segments.txt` output file is a plain text tab-separated file describing the regions of each inout genome that participate in each multiplicon, in terms of contigous aligned genes. Each row in the table represents an input genome region, with a unique ID in the column `id`, and defined by the first and last gene to contribute to that region. 
-
-Each multiplicon corresponds to at least two regions in the `segments.txt` file, and the unique multiplicon ID is indicated in the column `multiplicon`, allowing for cross-reference against the multiplicon tree.
-
-### Parsing
-
-The object model is constructed around a directed graph that represents the multiplicon tree, using the `network.DiGraph()` object. Nodes represent multiplicons, and each edge represents a parent-child relationship. A local [SQLite](http://www.sqlite.org/) database is constructed (in memory, by default) to hold multiplicon attributes, obtained from the `multiplicons.txt` and `segments.txt` files, and enable fast querying.
+* **NetworkX**: `pyADHoRe` uses an internal graph representation of i-ADHoRe's output, for which it uses the `NetworkX` graph module. <http://networkx.github.io>
 
 ## Example usage
 
@@ -91,6 +78,29 @@ print data.get_multiplicon_properties(8)
 
 ```
 
-## Dependencies 
+A further example of use can be seen in the [`draw_gd_all_core.py` script](https://github.com/widdowquinn/scripts/blob/master/bioinformatics/draw_gd_all_core.py).
 
-* **NetworkX**: `pyADHoRe` uses an internal graph representation of i-ADHoRe's output, for which it uses the `NetworkX` graph module. <http://networkx.github.io>
+## Test data
+
+The test data included in the `testdata` directory is the output of i-ADHoRe 3.0's installation tests.
+
+
+## i-ADHoRe output
+### Data structure
+
+>For more information on the i-ADHoRe algorithm please refer to the [i-ADHoRe publication](#publication), and software manual, which is included in the i-ADHoRe download.
+
+The data stucture of i-ADHoRe's output centres around *multiplicons*, which are mutually homologous segments of the input sequences. These are generated in i-ADHoRe 3.0 by an iterative process that generates a branching tree of progressively more refined multiplicons at distinct 'levels', which broadly represent the number of alignments that contribute to the region. The result of this process is recorded in the output plain text tab-separated tabular file `multiplicons.txt`.
+
+`multiplicons.txt` describes all multiplicons generated during the analysis, including a large number of redundant multiplicons. Each multiplicon is assigned to a row in the table, and gets a unique ID in the `id` column. The `parent` column in each row refers to this ID, and the branching process that generates all multiplicons is easily reconstructed as a tree from this information. The root node of each tree corresponds to a "level 2" multiplicon. Leaf nodes (which have no children because no other homologous segment could be added to the stack) correspond to the "final" multiplicons.
+
+The `segments.txt` output file is a plain text tab-separated file describing the regions of each inout genome that participate in each multiplicon, in terms of contigous aligned genes. Each row in the table represents an input genome region, with a unique ID in the column `id`, and defined by the first and last gene to contribute to that region. 
+
+Each multiplicon corresponds to at least two regions in the `segments.txt` file, and the unique multiplicon ID is indicated in the column `multiplicon`, allowing for cross-reference against the multiplicon tree.
+
+### Parsing
+
+The object model is constructed around a directed graph that represents the multiplicon tree, using the `network.DiGraph()` object. Nodes represent multiplicons, and each edge represents a parent-child relationship. A local [SQLite](http://www.sqlite.org/) database is constructed (in memory, by default) to hold multiplicon attributes, obtained from the `multiplicons.txt` and `segments.txt` files, and enable fast querying.
+
+
+
