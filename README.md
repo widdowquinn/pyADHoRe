@@ -30,7 +30,6 @@ data = IadhoreData(mf, sf)
 # Inspect some properties of the object
 print data
 print data.__dict__
-G = data.multiplicon_graph
 # OUTPUT:
 # <__main__.IadhoreData object at 0x107710610>
 #{'_dbconn': <sqlite3.Connection object at 0x107b2d4b8>, 
@@ -40,6 +39,7 @@ G = data.multiplicon_graph
 #'testdata/datasetII/multiplicons.txt'}
 
 # How many multiplicons were found?    
+G = data.multiplicon_graph
 print "Multiplicons:", len(G)
 # OUTPUT:
 # Multiplicons: 9759
