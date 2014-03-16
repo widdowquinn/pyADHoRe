@@ -36,7 +36,7 @@ setup(
     keywords = "genome ortholog synteny i-ADHoRe",
     platforms = "Posix; MacOS X",
     url = "https://github.com/widdowquinn/pyADHoRe",   # project home page, if any
-    download_url = "",
+    download_url = "https://github.com/widdowquinn/pyADHoRe/releases",
     scripts = [],
     packages = ['pyADHoRe'],
     install_requires = ['networkx>=1.8.1'],
