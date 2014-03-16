@@ -242,6 +242,8 @@ class IadhoreData(object):
     def is_redundant_multiplicon(self, value):
         """ Returns True if the passed multiplicon ID is redundant, False
             otherwise.
+        
+            - value, (int) multiplicon ID
         """
         if not hasattr(self, '_redundant_multiplicon_cache'):
             sql = '''SELECT id FROM multiplicons WHERE is_redundant="-1"'''
@@ -253,6 +255,50 @@ class IadhoreData(object):
             return True
         else:
             return False
+
+    def write(self, mf="multiplicons.txt", sf="segments.txt", 
+              clobber=False):
+        """ Writes multiplicon and segment files to the named locations.
+
+            - mf, (str) location for multiplicons file
+            - sf, (str) location for segments file
+            - clobber, (Boolean) True if we overwrite target files
+        """
+        if not clobber:
+            if os.path.isfile(mf): 
+                raise IOError, "Multiplicon file %s already exists." % mf
+            if os.path.isfile(sf): 
+                raise IOError, "Segments file %s already exists." % sf
+        self._write_multiplicons(mf)
+        self._write_segments(sf)
+    
+    def _write_multiplicons(self, filename):
+        """ Write multiplicons to file.
+
+            - filename, (str) location of output file
+        """
+        # Column headers
+        mhead = '\t'.join(['id', 'genome_x', 'list_x', 'parent', 'genome_y',
+                           'list_y', 'level', 'number_of_anchorpoints',
+                           'profile_length', 'begin_x', 'end_x', 'begin_y',
+                           'end_y', 'is_redundant'])
+        with open(filename, 'w') as fh:
+            fh.write(mhead + '\n')
+            for mrow in self.multiplicons:
+                fh.write('\t'.join([str(e) for e in mrow]) + '\n')
+
+    def _write_segments(self, filename):
+        """ Write segments to file.
+
+            - filename, (str) location of output file
+        """
+        # Column headers
+        shead = '\t'.join(['id', 'multiplicon', 'genome', 'list', 'first', 
+                           'last', 'order'])
+        with open(filename, 'w') as fh:
+            fh.write(shead + '\n')
+            for mrow in self.segments:
+                fh.write('\t'.join([str(e) for e in mrow]) + '\n')
 
 
     @property
@@ -289,6 +335,24 @@ class IadhoreData(object):
     def multiplicon_graph(self):
         """ Digraph representation of relationships between multiplicons."""
         return self._multiplicon_graph
+
+    @property
+    def multiplicons(self):
+        """ Multiplicon table from SQLite database. """
+        sql = '''SELECT * FROM multiplicons'''
+        cur = self._dbconn.cursor()
+        cur.execute(sql)
+        return [r for r in cur.fetchall()]
+        cur.close()
+
+    @property
+    def segments(self):
+        """ Segments table from SQLite database. """
+        sql = '''SELECT * FROM segments'''
+        cur = self._dbconn.cursor()
+        cur.execute(sql)
+        return [r for r in cur.fetchall()]
+        cur.close()
 
 
 # Function to return an IadhoreData object, given multiplicons
