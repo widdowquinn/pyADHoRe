@@ -1,1 +1,1 @@
-from iadhore import IadhoreData
+import iadhore
