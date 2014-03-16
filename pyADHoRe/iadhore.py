@@ -367,32 +367,3 @@ def read(mf, sf):
     assert os.path.isfile(mf), "%s multiplicon file does not exist"
     assert os.path.isfile(sf), "%s segments file does not exist"
     return IadhoreData(mf, sf)
-
-
-# Testing
-if __name__ == '__main__':
-
-    # i-adhore test dataset II
-    mf = os.path.join('testdata', 'datasetII', 'multiplicons.txt')
-    sf = os.path.join('testdata', 'datasetII', 'segments.txt')
-
-    data = IadhoreData(mf, sf)
-    print data
-    print data.__dict__
-    G = data.multiplicon_graph
-    
-    print "Multiplicons:", len(G)
-    
-    leaves = list(data.get_multiplicon_leaves())
-    print "Leaves: %d %s" % (len(leaves), leaves[:50])
-
-    seeds = list(data.get_multiplicon_seeds())
-    print "Seeds: %d %s" % (len(seeds), seeds[:50])
-
-    intermediates = list(data.get_multiplicon_intermediates())
-    print "Intermediates: %d %s" % (len(intermediates), intermediates[:50])
-
-    print data.get_multiplicon_properties(8)
-
-    print data.get_multiplicon_segments(28)
-
