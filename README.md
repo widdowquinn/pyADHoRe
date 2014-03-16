@@ -15,17 +15,19 @@ i-ADHoRe 3.0 has a complex output structure, and the software comes with a docum
 ## Example usage
 
 ```python
+from pyADHoRe import iadhore
+
 ## i-ADHoRe test dataset II
 # We use i-ADHoRe's own test output
 
 # Results are defined by the two files multiplicons.txt and 
 # segments.txt
-mf = os.path.join('testdata', 'datasetII', 'multiplicons.txt')
-sf = os.path.join('testdata', 'datasetII', 'segments.txt')
+mf = os.path.join('tests', 'datasetII', 'multiplicons.txt')
+sf = os.path.join('tests', 'datasetII', 'segments.txt')
 
 # The files are provided directly to the data object on 
 # instantiation
-data = IadhoreData(mf, sf)
+data = iadhore.read(mf, sf)
 
 # Inspect some properties of the object
 print data
