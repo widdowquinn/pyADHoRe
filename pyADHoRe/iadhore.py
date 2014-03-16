@@ -33,6 +33,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+# python package version
+# should match r"^__version__ = '(?P<version>[^']+)'$" for setup.py
+__version__ = '0.1.0'
+
 # standard library
 import collections
 import csv
@@ -285,6 +289,20 @@ class IadhoreData(object):
     def multiplicon_graph(self):
         """ Digraph representation of relationships between multiplicons."""
         return self._multiplicon_graph
+
+
+# Function to return an IadhoreData object, given multiplicons
+# and segments files
+def read(mf, sf):
+    """ Returns an IadhoreData object, constructed from the passed
+        i-ADHoRe multiplicon and segments output.
+
+        - mf, location of multiplicons.txt
+        - sf, location of segments.txt
+    """
+    assert os.path.isfile(mf), "%s multiplicon file does not exist"
+    assert os.path.isfile(sf), "%s segments file does not exist"
+    return IadhoreData(mf, sf)
 
 
 # Testing
