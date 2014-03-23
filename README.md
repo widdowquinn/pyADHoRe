@@ -15,7 +15,7 @@ i-ADHoRe 3.0 has a complex output structure, and the software comes with a docum
 ## Example usage
 
 ```python
-from pyADHoRe import iadhore
+from pyadhore import iadhore
 
 ## i-ADHoRe test dataset II
 # We use i-ADHoRe's own test output
