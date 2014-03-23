@@ -1,1 +1,1 @@
-import pyadhore.iadhore
+import iadhore

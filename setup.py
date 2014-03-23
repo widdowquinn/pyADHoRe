@@ -15,7 +15,7 @@ import sys
 import re
 
 # parse version from package/module without importing or evaluating the code
-with open('pyADHoRe/iadhore.py') as fh:
+with open('pyadhore/iadhore.py') as fh:
     for line in fh:
         m = re.search(r"^__version__ = '(?P<version>[^']+)'$", line)
         if m:
@@ -28,7 +28,7 @@ if sys.version_info <= (2, 5):
     sys.exit(1)
 
 setup(
-    name="pyADHoRe",
+    name="pyadhore",
     version=version,
     author="Leighton Pritchard",
     author_email="leighton.pritchard@hutton.ac.uk",
