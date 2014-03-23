@@ -84,7 +84,7 @@ A further example of use can be seen in the [`draw_gd_all_core.py` script](https
 
 ## Test data
 
-The test data included in the `testdata` directory is the output of i-ADHoRe 3.0's installation tests.
+The test data included in the `tests` subdirectory is the output of i-ADHoRe 3.0's installation tests.
 
 
 ## i-ADHoRe output
