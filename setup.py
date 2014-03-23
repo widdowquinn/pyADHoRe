@@ -2,7 +2,7 @@
 try:
     import distribute_setup
     distribute_setup.use_setuptools()
-except:
+except ImportError:
     pass
 
 try:
@@ -23,32 +23,33 @@ with open('pyADHoRe/iadhore.py') as fh:
             break
 
 if sys.version_info <= (2, 5):
-    sys.stderr.write("ERROR: pyADHoRe requires Python Version 2.6 or above...exiting.\n")
+    sys.stderr.write("ERROR: pyADHoRe requires Python Version 2.6 " +
+                     "or above...exiting.\n")
     sys.exit(1)
 
 setup(
-    name = "pyADHoRe",
-    version = version,
-    author = "Leighton Pritchard",
-    author_email = "leighton.pritchard@hutton.ac.uk",
-    description = "pyADHoRe provides a data structure for import and manipulation of i-ADHoRe output.",
-    license = "GPLv3",
-    keywords = "genome ortholog synteny i-ADHoRe",
-    platforms = "Posix; MacOS X",
-    url = "https://github.com/widdowquinn/pyADHoRe",   # project home page, if any
-    download_url = "https://github.com/widdowquinn/pyADHoRe/releases",
-    scripts = [],
-    packages = ['pyADHoRe'],
-    install_requires = ['networkx>=1.8.1'],
-    package_data = {
-        'pyADHoRe': [],
+    name="pyADHoRe",
+    version=version,
+    author="Leighton Pritchard",
+    author_email="leighton.pritchard@hutton.ac.uk",
+    description=''.join(["pyADHoRe provides a data structure for import " +\
+                         "and manipulation of i-ADHoRe output."]),
+    license="GPLv3",
+    keywords="genome ortholog synteny i-ADHoRe",
+    platforms="Posix; MacOS X",
+    url="https://github.com/widdowquinn/pyADHoRe",  # project home page
+    download_url="https://github.com/widdowquinn/pyADHoRe/releases",
+    scripts=[],
+    packages=['pyadhore'],
+    install_requires=['networkx>=1.8.1'],
+    package_data={
+        'pyadhore': [],
         },
     test_suite='tests.test_search.TestSearch',
-    classifiers = [
+    classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
         'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: GPLv3 License',
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',

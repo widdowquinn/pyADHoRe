@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # python package version
 # should match r"^__version__ = '(?P<version>[^']+)'$" for setup.py
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 # standard library
 import collections
@@ -65,11 +65,14 @@ class IadhoreData(object):
             o db_filename - location to write SQLite3 database (defaults to
                             in-memory)
         """
+        # Attributes later populated in methods
+        self._dbconn = None
+        self._redundant_multiplicon_cache = None
         # Get arguments and initialise
         self._multiplicon_file = multiplicon_file
         self._segment_file = segment_file
         self._db_file = db_filename
-        self._multiplicon_graph = nx.DiGraph()        
+        self._multiplicon_graph = nx.DiGraph()
         # Set up database
         self._dbsetup()
         # Load multiplicon and segment data into tree/SQL database
@@ -100,7 +103,7 @@ class IadhoreData(object):
         reader = csv.reader(open(self._multiplicon_file, 'rU'),
                             delimiter='\t')
         for row in reader:
-            if reader.line_num == 1: # skip header
+            if reader.line_num == 1:  # skip header
                 continue
             # Add data to SQLite db
             sql = '''INSERT INTO multiplicons
@@ -122,14 +125,14 @@ class IadhoreData(object):
         reader = csv.reader(open(self._segment_file, 'rU'),
                             delimiter='\t')
         for row in reader:
-            if reader.line_num == 1: #skip header
+            if reader.line_num == 1:  # skip header
                 continue
             sql = '''INSERT INTO segments
                      (id, multiplicon, genome, list, first, last, ord)
                      VALUES (?,?,?,?,?,?,?)'''
             self._dbconn.execute(sql, row)
         self._dbconn.commit()
-            
+
     def get_multiplicon_leaves(self, redundant=False):
         """ Return a generator of the IDs of multiplicons found at leaves
             of the tree (i.e. from which no further multiplicons were derived).
@@ -138,12 +141,12 @@ class IadhoreData(object):
 
             o redundant - if true, report redundant multiplicons
         """
-        for n in self._multiplicon_graph.nodes():
-            if not len(self._multiplicon_graph.out_edges(n)):
-                if not self.is_redundant_multiplicon(n):
-                    yield n
+        for node in self._multiplicon_graph.nodes():
+            if not len(self._multiplicon_graph.out_edges(node)):
+                if not self.is_redundant_multiplicon(node):
+                    yield node
                 elif redundant:
-                    yield n
+                    yield node
                 else:
                     continue
             else:
@@ -157,12 +160,12 @@ class IadhoreData(object):
 
             o redundant - if true, report redundant multiplicons
         """
-        for n in self._multiplicon_graph.nodes():
-            if not len(self._multiplicon_graph.in_edges(n)):
-                if not self.is_redundant_multiplicon(n):
-                    yield n
+        for node in self._multiplicon_graph.nodes():
+            if not len(self._multiplicon_graph.in_edges(node)):
+                if not self.is_redundant_multiplicon(node):
+                    yield node
                 elif redundant:
-                    yield n
+                    yield node
                 else:
                     continue
             else:
@@ -176,13 +179,13 @@ class IadhoreData(object):
 
             o redundant - if true, report redundant multiplicons
         """
-        for n in self._multiplicon_graph.nodes():
-            if len(self._multiplicon_graph.in_edges(n)) and \
-                   len(self._multiplicon_graph.out_edges(n)):
-                if not self.is_redundant_multiplicon(n):
-                    yield n
+        for node in self._multiplicon_graph.nodes():
+            if len(self._multiplicon_graph.in_edges(node)) and \
+               len(self._multiplicon_graph.out_edges(node)):
+                if not self.is_redundant_multiplicon(node):
+                    yield node
                 elif redundant:
-                    yield n
+                    yield node
                 else:
                     continue
             else:
@@ -207,7 +210,6 @@ class IadhoreData(object):
                 'profile_length': int(result[4]),
                 'is_redundant': True if result[5] == '-1' else False,
                 'segments': self.get_multiplicon_segments(value)}
-    
 
     def get_multiplicon_segments(self, value):
         """ Return a dictionary describing the genome segments that
@@ -242,7 +244,7 @@ class IadhoreData(object):
     def is_redundant_multiplicon(self, value):
         """ Returns True if the passed multiplicon ID is redundant, False
             otherwise.
-        
+
             - value, (int) multiplicon ID
         """
         if not hasattr(self, '_redundant_multiplicon_cache'):
@@ -256,22 +258,22 @@ class IadhoreData(object):
         else:
             return False
 
-    def write(self, mf="multiplicons.txt", sf="segments.txt", 
+    def write(self, mfile="multiplicons.txt", sfile="segments.txt",
               clobber=False):
         """ Writes multiplicon and segment files to the named locations.
 
-            - mf, (str) location for multiplicons file
-            - sf, (str) location for segments file
+            - mfile, (str) location for multiplicons file
+            - sfile, (str) location for segments file
             - clobber, (Boolean) True if we overwrite target files
         """
         if not clobber:
-            if os.path.isfile(mf): 
-                raise IOError, "Multiplicon file %s already exists." % mf
-            if os.path.isfile(sf): 
-                raise IOError, "Segments file %s already exists." % sf
-        self._write_multiplicons(mf)
-        self._write_segments(sf)
-    
+            if os.path.isfile(mfile):
+                raise IOError("Multiplicon file %s already exists." % mfile)
+            if os.path.isfile(sfile):
+                raise IOError("Segments file %s already exists." % sfile)
+        self._write_multiplicons(mfile)
+        self._write_segments(sfile)
+
     def _write_multiplicons(self, filename):
         """ Write multiplicons to file.
 
@@ -282,10 +284,10 @@ class IadhoreData(object):
                            'list_y', 'level', 'number_of_anchorpoints',
                            'profile_length', 'begin_x', 'end_x', 'begin_y',
                            'end_y', 'is_redundant'])
-        with open(filename, 'w') as fh:
-            fh.write(mhead + '\n')
+        with open(filename, 'w') as fhandle:
+            fhandle.write(mhead + '\n')
             for mrow in self.multiplicons:
-                fh.write('\t'.join([str(e) for e in mrow]) + '\n')
+                fhandle.write('\t'.join([str(e) for e in mrow]) + '\n')
 
     def _write_segments(self, filename):
         """ Write segments to file.
@@ -293,13 +295,12 @@ class IadhoreData(object):
             - filename, (str) location of output file
         """
         # Column headers
-        shead = '\t'.join(['id', 'multiplicon', 'genome', 'list', 'first', 
+        shead = '\t'.join(['id', 'multiplicon', 'genome', 'list', 'first',
                            'last', 'order'])
-        with open(filename, 'w') as fh:
-            fh.write(shead + '\n')
+        with open(filename, 'w') as fhandle:
+            fhandle.write(shead + '\n')
             for mrow in self.segments:
-                fh.write('\t'.join([str(e) for e in mrow]) + '\n')
-
+                fhandle.write('\t'.join([str(e) for e in mrow]) + '\n')
 
     @property
     def multiplicon_file(self):
@@ -308,6 +309,7 @@ class IadhoreData(object):
 
     @multiplicon_file.setter
     def multiplicon_file(self, value):
+        """ Setter for _multiplicon_file attribute """
         assert os.path.isfile(value), "%s is not a valid file" % value
         self._multiplicon_file = value
 
@@ -318,6 +320,7 @@ class IadhoreData(object):
 
     @segment_file.setter
     def segment_file(self, value):
+        """ Setter for _segment_file attribute """
         assert os.path.isfile(value), "%s is not a valid file" % value
         self._segment_file = value
 
@@ -326,8 +329,9 @@ class IadhoreData(object):
         """ Location of the SQLite database."""
         return self._db_file
 
-    @segment_file.setter
+    @db_file.setter
     def db_file(self, value):
+        """ Setter for _db_file attribute """
         assert not os.path.isfile(value), "%s already exists" % value
         self._db_file = value
 
@@ -342,8 +346,9 @@ class IadhoreData(object):
         sql = '''SELECT * FROM multiplicons'''
         cur = self._dbconn.cursor()
         cur.execute(sql)
-        return [r for r in cur.fetchall()]
+        data = [r for r in cur.fetchall()]
         cur.close()
+        return data
 
     @property
     def segments(self):
@@ -351,19 +356,20 @@ class IadhoreData(object):
         sql = '''SELECT * FROM segments'''
         cur = self._dbconn.cursor()
         cur.execute(sql)
-        return [r for r in cur.fetchall()]
+        data = [r for r in cur.fetchall()]
         cur.close()
+        return data
 
 
 # Function to return an IadhoreData object, given multiplicons
 # and segments files
-def read(mf, sf):
+def read(mfile, sfile):
     """ Returns an IadhoreData object, constructed from the passed
         i-ADHoRe multiplicon and segments output.
 
-        - mf, location of multiplicons.txt
-        - sf, location of segments.txt
+        - mfile (str), location of multiplicons.txt
+        - sfile (str), location of segments.txt
     """
-    assert os.path.isfile(mf), "%s multiplicon file does not exist"
-    assert os.path.isfile(sf), "%s segments file does not exist"
-    return IadhoreData(mf, sf)
+    assert os.path.isfile(mfile), "%s multiplicon file does not exist"
+    assert os.path.isfile(sfile), "%s segments file does not exist"
+    return IadhoreData(mfile, sfile)

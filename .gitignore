@@ -1,1 +1,7 @@
 *~
+*.pyc
+tests/multiplicons.txt
+tests/segments.txt
+build/
+dist/
+*.egg-info/

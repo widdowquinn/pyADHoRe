@@ -36,7 +36,7 @@ import os
 import unittest
 
 # pyADHoRe
-from pyADHoRe import iadhore
+from pyadhore import iadhore
 
 # Test ability to load multiplicons.txt/segments.txt
 class ReadTest(unittest.TestCase):
@@ -54,7 +54,7 @@ class ReadTest(unittest.TestCase):
         data.write(clobber=True)
         with open(data.multiplicon_file, 'rU') as forig:
             with open("multiplicons.txt", 'rU') as fnew:
-                self.assertEqual(forig.read(), fnew.read())        
+                self.assertEqual(forig.read(), fnew.read())
 
     def test_datasetII_roundtrip(self):
         """ Test roundtrip read/write dataset II output. """
@@ -66,5 +66,5 @@ class ReadTest(unittest.TestCase):
 
 # Run tests
 if __name__ == "__main__":
-    runner = unittest.TextTestRunner(verbosity = 2)
-    unittest.main(testRunner = runner)
+    runner = unittest.TextTestRunner(verbosity=2)
+    unittest.main(testRunner=runner)
