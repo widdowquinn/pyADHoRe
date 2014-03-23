@@ -42,9 +42,6 @@ setup(
     scripts=[],
     packages=['pyadhore'],
     install_requires=['networkx>=1.8.1'],
-    package_data={
-        'pyadhore': [],
-        },
     test_suite='tests.test_search.TestSearch',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
