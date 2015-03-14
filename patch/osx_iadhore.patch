@@ -1,0 +1,596 @@
+Only in i-adhore-3.0.01_patched: .DS_Store
+diff -cr i-adhore-3.0.01/CMakeLists.txt i-adhore-3.0.01_patched/CMakeLists.txt
+*** i-adhore-3.0.01/CMakeLists.txt	2012-05-24 16:02:58.000000000 +0100
+--- i-adhore-3.0.01_patched/CMakeLists.txt	2014-03-09 15:36:15.000000000 +0000
+***************
+*** 42,48 ****
+  endif(PNG_FOUND)
+  
+  # set the target-specific flags
+! set(CMAKE_CXX_FLAGS "-Wno-deprecated ${MPI_COMPILE_FLAGS}")
+  set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
+  set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g3")
+--- 42,50 ----
+  endif(PNG_FOUND)
+  
+  # set the target-specific flags
+! # Changed to libstdc++ for OSX compilation
+! #set(CMAKE_CXX_FLAGS "-Wno-deprecated ${MPI_COMPILE_FLAGS}")
+! set(CMAKE_CXX_FLAGS "-Wno-deprecated ${MPI_COMPILE_FLAGS} -stdlib=libstdc++")
+  set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
+  set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g3")
+Only in i-adhore-3.0.01_patched: CMakeLists.txt~
+diff -cr i-adhore-3.0.01/src/BaseCluster.h i-adhore-3.0.01_patched/src/BaseCluster.h
+*** i-adhore-3.0.01/src/BaseCluster.h	2012-03-27 09:32:19.000000000 +0100
+--- i-adhore-3.0.01_patched/src/BaseCluster.h	2014-03-09 15:38:51.000000000 +0000
+***************
+*** 289,295 ****
+          clusterID = ID;
+      }
+  
+!     uint getID() {
+          return clusterID;
+      }
+  
+--- 289,295 ----
+          clusterID = ID;
+      }
+  
+!     unsigned int getID() {
+          return clusterID;
+      }
+  
+***************
+*** 328,334 ****
+  
+      bool was_twisted;
+  
+!     uint clusterID;    // unique identifier for the basecluster
+  };
+  
+  #endif
+--- 328,334 ----
+  
+      bool was_twisted;
+  
+!     unsigned int clusterID;    // unique identifier for the basecluster
+  };
+  
+  #endif
+diff -cr i-adhore-3.0.01/src/GHM.h i-adhore-3.0.01_patched/src/GHM.h
+*** i-adhore-3.0.01/src/GHM.h	2011-06-08 10:04:12.000000000 +0100
+--- i-adhore-3.0.01_patched/src/GHM.h	2014-03-09 15:39:15.000000000 +0000
+***************
+*** 277,283 ****
+      * @param gap Gap size (criterium for adding new points to the SC) ->extension over which is the bounding box is resized
+      * @param bf if bruteforce=true then the exact distances between the ap is calculated
+      */
+!     void condenseClouds(uint gap, bool bf);
+  
+      /**
+      * In contrast to the equivalent seedBaseCluster condenseCloud can also inflate nonunit size clouds
+--- 277,283 ----
+      * @param gap Gap size (criterium for adding new points to the SC) ->extension over which is the bounding box is resized
+      * @param bf if bruteforce=true then the exact distances between the ap is calculated
+      */
+!     void condenseClouds(unsigned int gap, bool bf);
+  
+      /**
+      * In contrast to the equivalent seedBaseCluster condenseCloud can also inflate nonunit size clouds
+***************
+*** 286,292 ****
+      * @param foundNewAP New AP found during condensing process
+      * @param bf if bruteforce=true then the exact distances between the ap is calculated
+      */
+!     void condenseCloud(SynthenicCloud& sCloud, uint gap, vector<AnchorPoint>& foundNewAP, bool bf);
+  
+  
+  
+--- 286,292 ----
+      * @param foundNewAP New AP found during condensing process
+      * @param bf if bruteforce=true then the exact distances between the ap is calculated
+      */
+!     void condenseCloud(SynthenicCloud& sCloud, unsigned int gap, vector<AnchorPoint>& foundNewAP, bool bf);
+  
+  
+  
+***************
+*** 319,325 ****
+      * @param bf if bruteforce=true then the exact distances between the ap is calculated
+      * complexity is than quadratic but the avalanche effect is definitely absent
+      */
+!     void inflateClouds(uint gap, bool bf);
+  
+      /**
+      * Combines clouds which lie closely together
+--- 319,325 ----
+      * @param bf if bruteforce=true then the exact distances between the ap is calculated
+      * complexity is than quadratic but the avalanche effect is definitely absent
+      */
+!     void inflateClouds(unsigned int gap, bool bf);
+  
+      /**
+      * Combines clouds which lie closely together
+***************
+*** 327,345 ****
+      * In mergeClouds the actual distance will be calculated and will have to be smaller than gap
+      * @param gap Gap size (criterium for adding new points to the SC)
+      */
+!     void mergeClouds(uint clustergap, bool bf);
+  
+      /**
+      * The difference with mergeClouds is that always the exact distance will be calculated between the clouds
+      * which is alot more time intensive, and not really useful
+      */
+!     void mergeCloudsBruteForce(uint gap, bool bf);
+  
+      /**
+      * Calculate distances between the corners of the bounding boxes
+      *@return minimum corner distance
+      */
+!     uint estimateCloudKspd(SynthenicCloud& scloud1, SynthenicCloud& scloud2) const;
+  
+      /**
+      * For both Clusters the minimal distance between AP is calculated
+--- 327,345 ----
+      * In mergeClouds the actual distance will be calculated and will have to be smaller than gap
+      * @param gap Gap size (criterium for adding new points to the SC)
+      */
+!     void mergeClouds(unsigned int clustergap, bool bf);
+  
+      /**
+      * The difference with mergeClouds is that always the exact distance will be calculated between the clouds
+      * which is alot more time intensive, and not really useful
+      */
+!     void mergeCloudsBruteForce(unsigned int gap, bool bf);
+  
+      /**
+      * Calculate distances between the corners of the bounding boxes
+      *@return minimum corner distance
+      */
+!     unsigned int estimateCloudKspd(SynthenicCloud& scloud1, SynthenicCloud& scloud2) const;
+  
+      /**
+      * For both Clusters the minimal distance between AP is calculated
+***************
+*** 349,361 ****
+      * between two cloud's AP
+      * NOTE: don't use when clouds overlap, it will return wrong result
+      */
+!     uint calculateMinimalKspdBetweenClouds(SynthenicCloud& scloud1, SynthenicCloud& scloud2, uint frameThickness) const;
+  
+      /**
+      * Calculates the exact distance between two clusters by calculating the distance between all AP pairs
+      * @return Returns exact distance O(AP^2) time!
+      */
+!     uint calculateMinimalKspdBetweenCloudsBruteForce(SynthenicCloud& scloud1, SynthenicCloud& scloud2) const;
+  
+      /**
+      * @return true when bounding boxes of two clouds overlap
+--- 349,361 ----
+      * between two cloud's AP
+      * NOTE: don't use when clouds overlap, it will return wrong result
+      */
+!     unsigned int calculateMinimalKspdBetweenClouds(SynthenicCloud& scloud1, SynthenicCloud& scloud2, unsigned int frameThickness) const;
+  
+      /**
+      * Calculates the exact distance between two clusters by calculating the distance between all AP pairs
+      * @return Returns exact distance O(AP^2) time!
+      */
+!     unsigned int calculateMinimalKspdBetweenCloudsBruteForce(SynthenicCloud& scloud1, SynthenicCloud& scloud2) const;
+  
+      /**
+      * @return true when bounding boxes of two clouds overlap
+diff -cr i-adhore-3.0.01/src/SynthenicCloud.cpp i-adhore-3.0.01_patched/src/SynthenicCloud.cpp
+*** i-adhore-3.0.01/src/SynthenicCloud.cpp	2012-03-27 09:32:19.000000000 +0100
+--- i-adhore-3.0.01_patched/src/SynthenicCloud.cpp	2014-03-09 15:38:17.000000000 +0000
+***************
+*** 52,68 ****
+      anchorPoints.push_back(point);
+  }
+  
+! uint SynthenicCloud::getCountAnchorPoints() const
+  {
+      return anchorPoints.size();
+  }
+  
+! uint SynthenicCloud::getLowestX() const
+  {
+      if (anchorPoints.size()==0)
+          return 0;
+  
+!     uint lowestX=anchorPoints[0].getX();
+  
+      for (int i=1; i<anchorPoints.size(); i++) {
+          const AnchorPoint& AP=anchorPoints[i];
+--- 52,68 ----
+      anchorPoints.push_back(point);
+  }
+  
+! unsigned int SynthenicCloud::getCountAnchorPoints() const
+  {
+      return anchorPoints.size();
+  }
+  
+! unsigned int SynthenicCloud::getLowestX() const
+  {
+      if (anchorPoints.size()==0)
+          return 0;
+  
+!     unsigned int lowestX=anchorPoints[0].getX();
+  
+      for (int i=1; i<anchorPoints.size(); i++) {
+          const AnchorPoint& AP=anchorPoints[i];
+***************
+*** 72,83 ****
+      return lowestX;
+  }
+  
+! uint SynthenicCloud::getLowestY() const
+  {
+      if (anchorPoints.size()==0)
+          return 0;
+  
+!     uint lowestY=anchorPoints[0].getY();
+  
+      for (int i=1; i<anchorPoints.size(); i++) {
+          const AnchorPoint& AP=anchorPoints[i];
+--- 72,83 ----
+      return lowestX;
+  }
+  
+! unsigned int SynthenicCloud::getLowestY() const
+  {
+      if (anchorPoints.size()==0)
+          return 0;
+  
+!     unsigned int lowestY=anchorPoints[0].getY();
+  
+      for (int i=1; i<anchorPoints.size(); i++) {
+          const AnchorPoint& AP=anchorPoints[i];
+***************
+*** 86,96 ****
+      return lowestY;
+  }
+  
+! uint SynthenicCloud::getHighestX() const
+  {
+      if (anchorPoints.size()==0)
+          return 0;
+!     uint highestX=anchorPoints[0].getX();
+  
+      for (int i=1; i<anchorPoints.size(); i++) {
+          const AnchorPoint& AP=anchorPoints[i];
+--- 86,96 ----
+      return lowestY;
+  }
+  
+! unsigned int SynthenicCloud::getHighestX() const
+  {
+      if (anchorPoints.size()==0)
+          return 0;
+!     unsigned int highestX=anchorPoints[0].getX();
+  
+      for (int i=1; i<anchorPoints.size(); i++) {
+          const AnchorPoint& AP=anchorPoints[i];
+***************
+*** 99,110 ****
+      return highestX;
+  }
+  
+! uint SynthenicCloud::getHighestY() const
+  {
+      if (anchorPoints.size()==0)
+          return 0;
+  
+!     uint highestY=anchorPoints[0].getY();
+  
+      for (int i=1; i<anchorPoints.size(); i++) {
+          const AnchorPoint& AP=anchorPoints[i];
+--- 99,110 ----
+      return highestX;
+  }
+  
+! unsigned int SynthenicCloud::getHighestY() const
+  {
+      if (anchorPoints.size()==0)
+          return 0;
+  
+!     unsigned int highestY=anchorPoints[0].getY();
+  
+      for (int i=1; i<anchorPoints.size(); i++) {
+          const AnchorPoint& AP=anchorPoints[i];
+***************
+*** 206,212 ****
+      }
+  }
+  
+! vector<AnchorPoint> SynthenicCloud::calcAPInOuterFrame(uint frameThickness) const
+  {
+      vector<AnchorPoint> APInFrame;
+      AnchorPoint AP(0,0,true);
+--- 206,212 ----
+      }
+  }
+  
+! vector<AnchorPoint> SynthenicCloud::calcAPInOuterFrame(unsigned int frameThickness) const
+  {
+      vector<AnchorPoint> APInFrame;
+      AnchorPoint AP(0,0,true);
+***************
+*** 223,229 ****
+      return APInFrame;
+  }
+  
+! uint SynthenicCloud::distanceToCloud(int x, int y) const
+  {
+      assert(anchorPoints.size()!=0);
+  
+--- 223,229 ----
+      return APInFrame;
+  }
+  
+! unsigned int SynthenicCloud::distanceToCloud(int x, int y) const
+  {
+      assert(anchorPoints.size()!=0);
+  
+diff -cr i-adhore-3.0.01/src/SynthenicCloud.h i-adhore-3.0.01_patched/src/SynthenicCloud.h
+*** i-adhore-3.0.01/src/SynthenicCloud.h	2010-10-29 13:17:03.000000000 +0100
+--- i-adhore-3.0.01_patched/src/SynthenicCloud.h	2014-03-09 15:38:33.000000000 +0000
+***************
+*** 49,75 ****
+      /**
+      *@Return Number of AP in cloud
+      */
+!     uint getCountAnchorPoints() const;
+  
+      /**
+      * @Return for all anchorpoints the lowest x coordinate
+      */
+!     uint getLowestX() const;
+  
+      /**
+      * @Return for all anchorpoints the highest x coordinate
+      */
+!     uint getHighestX() const;
+  
+      /**
+      * @Return for all anchorpoints the lowest y coordinate
+      */
+!     uint getLowestY() const;
+  
+      /**
+      * @Return for all anchorpoints the highest y coordinate
+      */
+!     uint getHighestY() const;
+  
+      /**
+      * @Return the probability that cloud has been generated by chance following a (complement) cumulative binomial distribution function
+--- 49,75 ----
+      /**
+      *@Return Number of AP in cloud
+      */
+!     unsigned int getCountAnchorPoints() const;
+  
+      /**
+      * @Return for all anchorpoints the lowest x coordinate
+      */
+!     unsigned int getLowestX() const;
+  
+      /**
+      * @Return for all anchorpoints the highest x coordinate
+      */
+!     unsigned int getHighestX() const;
+  
+      /**
+      * @Return for all anchorpoints the lowest y coordinate
+      */
+!     unsigned int getLowestY() const;
+  
+      /**
+      * @Return for all anchorpoints the highest y coordinate
+      */
+!     unsigned int getHighestY() const;
+  
+      /**
+      * @Return the probability that cloud has been generated by chance following a (complement) cumulative binomial distribution function
+***************
+*** 94,124 ****
+      /**
+      * @return a vector with AP which are within a distance of framethickness from the bounding box edge
+      */
+!     vector<AnchorPoint> calcAPInOuterFrame(uint frameThickness) const;
+  
+      /**
+      * @return dimensions of bounding box
+      */
+!     uint calculateBoxWidth() const {
+          return end_x-begin_x+1;
+      }
+  
+!     uint calculateBoxHeight() const {
+          return end_y-begin_y+1;
+      }
+  
+!     void setID(uint ID) {
+          clusterID = ID;
+      }
+  
+!     uint getID() const {
+          return clusterID;
+      }
+  
+      /**
+      * @return kspd from point to closest point in cloud
+      */
+!     uint distanceToCloud(int x, int y) const;
+  
+      /**
+      * @return const_iterator to begin of AP vector
+--- 94,124 ----
+      /**
+      * @return a vector with AP which are within a distance of framethickness from the bounding box edge
+      */
+!     vector<AnchorPoint> calcAPInOuterFrame(unsigned int frameThickness) const;
+  
+      /**
+      * @return dimensions of bounding box
+      */
+!     unsigned int calculateBoxWidth() const {
+          return end_x-begin_x+1;
+      }
+  
+!     unsigned int calculateBoxHeight() const {
+          return end_y-begin_y+1;
+      }
+  
+!     void setID(unsigned int ID) {
+          clusterID = ID;
+      }
+  
+!     unsigned int getID() const {
+          return clusterID;
+      }
+  
+      /**
+      * @return kspd from point to closest point in cloud
+      */
+!     unsigned int distanceToCloud(int x, int y) const;
+  
+      /**
+      * @return const_iterator to begin of AP vector
+***************
+*** 188,194 ****
+  private:
+  
+      vector<AnchorPoint> anchorPoints;
+!     uint clusterID;
+      double random_probability;
+  
+      /**
+--- 188,194 ----
+  private:
+  
+      vector<AnchorPoint> anchorPoints;
+!     unsigned int clusterID;
+      double random_probability;
+  
+      /**
+diff -cr i-adhore-3.0.01/src/bmp/color.cpp i-adhore-3.0.01_patched/src/bmp/color.cpp
+*** i-adhore-3.0.01/src/bmp/color.cpp	2010-08-27 15:10:21.000000000 +0100
+--- i-adhore-3.0.01_patched/src/bmp/color.cpp	2014-03-09 15:37:24.000000000 +0000
+***************
+*** 25,35 ****
+          return false;
+  }
+  
+! void Color::getIntegerRGB(uint& red, uint& green, uint& blue) const
+  {
+!     red = (uint)r;
+!     green =(uint)g;
+!     blue = (uint)b;
+  }
+  
+  void Color::getRandomColor()
+--- 25,35 ----
+          return false;
+  }
+  
+! void Color::getIntegerRGB(unsigned int& red, unsigned int& green, unsigned int& blue) const
+  {
+!     red = (unsigned int)r;
+!     green =(unsigned int)g;
+!     blue = (unsigned int)b;
+  }
+  
+  void Color::getRandomColor()
+diff -cr i-adhore-3.0.01/src/bmp/pnghandling.cpp i-adhore-3.0.01_patched/src/bmp/pnghandling.cpp
+*** i-adhore-3.0.01/src/bmp/pnghandling.cpp	2010-10-13 12:17:41.000000000 +0100
+--- i-adhore-3.0.01_patched/src/bmp/pnghandling.cpp	2014-03-09 15:37:50.000000000 +0000
+***************
+*** 37,43 ****
+      return true;
+  }
+  
+! void PngHandling::setImageDimensions(uint w, uint h)
+  {
+      width=w;
+      height=h;
+--- 37,43 ----
+      return true;
+  }
+  
+! void PngHandling::setImageDimensions(unsigned int w, unsigned int h)
+  {
+      width=w;
+      height=h;
+***************
+*** 54,60 ****
+      //putBackground(veryBlack);
+  }
+  
+! void PngHandling::putPixel(uint x, uint y, const Color& c)
+  {
+      assert(isInitialized());
+  
+--- 54,60 ----
+      //putBackground(veryBlack);
+  }
+  
+! void PngHandling::putPixel(unsigned int x, unsigned int y, const Color& c)
+  {
+      assert(isInitialized());
+  
+***************
+*** 118,124 ****
+          png_byte* row = row_pointers[y];
+          for (int x=0; x<width; x++) {
+              png_byte* ptr = &(row[x*4]);
+!             uint p0,p1,p2;
+              c.getIntegerRGB(p0,p1,p2);
+              ptr[0]=p0; ptr[1]=p1; ptr[2]=p2; ptr[3]=255;
+          }
+--- 118,124 ----
+          png_byte* row = row_pointers[y];
+          for (int x=0; x<width; x++) {
+              png_byte* ptr = &(row[x*4]);
+!             unsigned int p0,p1,p2;
+              c.getIntegerRGB(p0,p1,p2);
+              ptr[0]=p0; ptr[1]=p1; ptr[2]=p2; ptr[3]=255;
+          }
+diff -cr i-adhore-3.0.01/src/bmp/pnghandling.h i-adhore-3.0.01_patched/src/bmp/pnghandling.h
+*** i-adhore-3.0.01/src/bmp/pnghandling.h	2010-08-27 15:10:21.000000000 +0100
+--- i-adhore-3.0.01_patched/src/bmp/pnghandling.h	2014-03-09 15:36:54.000000000 +0000
+***************
+*** 48,61 ****
+      * @param w number of pixels in x-direction
+      * @param h number of pixels in y-direction
+      */
+!     void setImageDimensions(uint w, uint h);
+  
+      /**
+      * Allocate memory for PNG image & initialize background
+      */
+      void prepareImage();
+  
+!     void putPixel(uint x, uint y, const Color& c);
+  
+      void writeToFile(char* file_name);
+  
+--- 48,61 ----
+      * @param w number of pixels in x-direction
+      * @param h number of pixels in y-direction
+      */
+!     void setImageDimensions(unsigned int w, unsigned int h);
+  
+      /**
+      * Allocate memory for PNG image & initialize background
+      */
+      void prepareImage();
+  
+!     void putPixel(unsigned int x, unsigned int y, const Color& c);
+  
+      void writeToFile(char* file_name);
+  
