@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Pyadhore by widdowquinn</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Pyadhore</h1>
+          <h2>Python code for handling i-ADHoRe output.</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/widdowquinn/pyADHoRe/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/widdowquinn/pyADHoRe/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/widdowquinn/pyADHoRe" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a id="readmemd---pyadhore" class="anchor" href="#readmemd---pyadhore" aria-hidden="true"><span class="octicon octicon-link"></span></a>README.md - pyADHoRe</h1>
+
+<h2>
+<a id="overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h2>
+
+<p><code>pyADHoRe</code> is a module that provides a basic data object and parser for manipulating and processing output of the <a href="http://bioinformatics.psb.ugent.be/software/details/i--ADHoRe">i-ADHoRe 3.0</a> bioinformatics tool into Python.</p>
+
+<p>i-ADHoRe 3.0 has a complex output structure, and the software comes with a documented Perl API. There is no corresponding API for Python. This module is intended to enable additional analysis and visualisation of i-ADHore output data using Python.</p>
+
+<ul>
+<li>
+<a name="publication">i-ADHoRe 3.0 publication</a>: Simillion, C., Janssens, K., Sterck, L., Van de Peer, Y. (2008) i-ADHoRe 2.0: An improved tool to detect degenerated genomic homology using genomic profiles. <em>Bioinformatics</em> <strong>24</strong>, 127-8. <a href="http://dx.doi.org/doi:10.1093/bioinformatics/btm449">http://dx.doi.org/doi:10.1093/bioinformatics/btm449</a>
+</li>
+</ul>
+
+<h2>
+<a id="dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dependencies</h2>
+
+<ul>
+<li>
+<strong>NetworkX</strong>: <code>pyADHoRe</code> uses an internal graph representation of i-ADHoRe's output, for which it uses the <code>NetworkX</code> graph module. <a href="http://networkx.github.io">http://networkx.github.io</a>
+</li>
+</ul>
+
+<h2>
+<a id="example-usage" class="anchor" href="#example-usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example usage</h2>
+
+<div class="highlight highlight-source-python"><pre><span class="pl-k">from</span> pyadhore <span class="pl-k">import</span> iadhore
+
+<span class="pl-c">## i-ADHoRe test dataset II</span>
+<span class="pl-c"># We use i-ADHoRe's own test output</span>
+
+<span class="pl-c"># Results are defined by the two files multiplicons.txt and </span>
+<span class="pl-c"># segments.txt</span>
+mf <span class="pl-k">=</span> os.path.join(<span class="pl-s"><span class="pl-pds">'</span>tests<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>datasetII<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>multiplicons.txt<span class="pl-pds">'</span></span>)
+sf <span class="pl-k">=</span> os.path.join(<span class="pl-s"><span class="pl-pds">'</span>tests<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>datasetII<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>segments.txt<span class="pl-pds">'</span></span>)
+
+<span class="pl-c"># The files are provided directly to the data object on </span>
+<span class="pl-c"># instantiation</span>
+data <span class="pl-k">=</span> iadhore.read(mf, sf)
+
+<span class="pl-c"># Inspect some properties of the object</span>
+<span class="pl-k">print</span> data
+<span class="pl-k">print</span> data.<span class="pl-c1">__dict__</span>
+<span class="pl-c"># OUTPUT:</span>
+<span class="pl-c"># &lt;__main__.IadhoreData object at 0x107710610&gt;</span>
+<span class="pl-c">#{'_dbconn': &lt;sqlite3.Connection object at 0x107b2d4b8&gt;, </span>
+<span class="pl-c">#'_segment_file': 'testdata/datasetII/segments.txt', </span>
+<span class="pl-c">#'_multiplicon_graph': &lt;networkx.classes.digraph.DiGraph object at 0x107b08b50&gt;, </span>
+<span class="pl-c">#'_db_file': ':memory:', '_multiplicon_file': </span>
+<span class="pl-c">#'testdata/datasetII/multiplicons.txt'}</span>
+
+<span class="pl-c"># How many multiplicons were found?    </span>
+G <span class="pl-k">=</span> data.multiplicon_graph
+<span class="pl-k">print</span> <span class="pl-s"><span class="pl-pds">"</span>Multiplicons:<span class="pl-pds">"</span></span>, <span class="pl-c1">len</span>(G)
+<span class="pl-c"># OUTPUT:</span>
+<span class="pl-c"># Multiplicons: 9759</span>
+
+<span class="pl-c"># How many multiplicons were "final" leaves? Show the first 50 IDs.</span>
+leaves <span class="pl-k">=</span> <span class="pl-c1">list</span>(data.get_multiplicon_leaves())
+<span class="pl-k">print</span> <span class="pl-s"><span class="pl-pds">"</span>Leaves: <span class="pl-c1">%d</span> <span class="pl-c1">%s</span><span class="pl-pds">"</span></span> <span class="pl-k">%</span> (<span class="pl-c1">len</span>(leaves), leaves[:<span class="pl-c1">50</span>])
+<span class="pl-c"># OUTPUT:</span>
+<span class="pl-c"># Leaves: 2710 [8, 9, 11, 12, 13, 19, 20, 21, 22, 25, 26, 27, </span>
+<span class="pl-c"># 29, 31, 32, 35, 36, 37, 38, 40, 41, 42, 43, 44, 45, 48, 50, </span>
+<span class="pl-c">#51, 52, 53, 54, 56, 57, 59, 61, 62, 63, 65, 66, 67, 68, 69, 70, </span>
+<span class="pl-c">#71, 74, 75, 76, 77, 80, 82]</span>
+
+<span class="pl-c"># How many multiplicons were "seeds"? Show the first 50 IDs.</span>
+seeds <span class="pl-k">=</span> <span class="pl-c1">list</span>(data.get_multiplicon_seeds())
+<span class="pl-k">print</span> <span class="pl-s"><span class="pl-pds">"</span>Seeds: <span class="pl-c1">%d</span> <span class="pl-c1">%s</span><span class="pl-pds">"</span></span> <span class="pl-k">%</span> (<span class="pl-c1">len</span>(seeds), seeds[:<span class="pl-c1">50</span>])
+<span class="pl-c"># OUTPUT:</span>
+<span class="pl-c"># Seeds: 661 [1, 729, 952, 1284, 1514, 1647, 1726, 1765, 1789, </span>
+<span class="pl-c"># 1890, 1961, 1986, 2080, 2091, 2115, 2165, 2174, 2272, 2288, </span>
+<span class="pl-c"># 2321, 2337, 2380, 2398, 2474, 2476, 2486, 2496, 2524, 2556, </span>
+<span class="pl-c"># 2560, 2566, 2576, 2615, 2634, 2671, 2675, 2735, 2761, 2796, </span>
+<span class="pl-c"># 2799, 2834, 2841, 2852, 2877, 2882, 2884, 2887, 2903, 2918, </span>
+<span class="pl-c"># 2920]</span>
+
+<span class="pl-c"># What was in the first leaf multiplicon?</span>
+<span class="pl-k">print</span> data.get_multiplicon_properties(<span class="pl-c1">8</span>)
+<span class="pl-c"># OUTPUT:</span>
+<span class="pl-c"># {'is_redundant': False, 'parent': 7, 'level': 9, </span>
+<span class="pl-c"># 'segments': defaultdict(&lt;type 'tuple'&gt;, </span>
+<span class="pl-c"># {u'ath': (u'AT1G44120', u'AT1G44542'),</span>
+<span class="pl-c"># u'ptr': (u'PT07G04280', u'PT07G04610'), </span>
+<span class="pl-c"># u'vvi': (u'VV07G13270', u'VV07G13580')}), </span>
+<span class="pl-c"># 'profile_length': 61,</span>
+<span class="pl-c"># 'number_of_anchorpoints': 9, 'id': 8}</span>
+
+</pre></div>
+
+<p>A further example of use can be seen in the <a href="https://github.com/widdowquinn/scripts/blob/master/bioinformatics/draw_gd_all_core.py"><code>draw_gd_all_core.py</code> script</a>.</p>
+
+<h2>
+<a id="test-data" class="anchor" href="#test-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Test data</h2>
+
+<p>The test data included in the <code>tests</code> subdirectory is the output of i-ADHoRe 3.0's installation tests.</p>
+
+<h2>
+<a id="i-adhore-output" class="anchor" href="#i-adhore-output" aria-hidden="true"><span class="octicon octicon-link"></span></a>i-ADHoRe output</h2>
+
+<h3>
+<a id="data-structure" class="anchor" href="#data-structure" aria-hidden="true"><span class="octicon octicon-link"></span></a>Data structure</h3>
+
+<blockquote>
+<p>For more information on the i-ADHoRe algorithm please refer to the <a href="#publication">i-ADHoRe publication</a>, and software manual, which is included in the i-ADHoRe download.</p>
+</blockquote>
+
+<p>The data stucture of i-ADHoRe's output centres around <em>multiplicons</em>, which are mutually homologous segments of the input sequences. These are generated in i-ADHoRe 3.0 by an iterative process that generates a branching tree of progressively more refined multiplicons at distinct 'levels', which broadly represent the number of alignments that contribute to the region. The result of this process is recorded in the output plain text tab-separated tabular file <code>multiplicons.txt</code>.</p>
+
+<p><code>multiplicons.txt</code> describes all multiplicons generated during the analysis, including a large number of redundant multiplicons. Each multiplicon is assigned to a row in the table, and gets a unique ID in the <code>id</code> column. The <code>parent</code> column in each row refers to this ID, and the branching process that generates all multiplicons is easily reconstructed as a tree from this information. The root node of each tree corresponds to a "level 2" multiplicon. Leaf nodes (which have no children because no other homologous segment could be added to the stack) correspond to the "final" multiplicons.</p>
+
+<p>The <code>segments.txt</code> output file is a plain text tab-separated file describing the regions of each inout genome that participate in each multiplicon, in terms of contigous aligned genes. Each row in the table represents an input genome region, with a unique ID in the column <code>id</code>, and defined by the first and last gene to contribute to that region. </p>
+
+<p>Each multiplicon corresponds to at least two regions in the <code>segments.txt</code> file, and the unique multiplicon ID is indicated in the column <code>multiplicon</code>, allowing for cross-reference against the multiplicon tree.</p>
+
+<h3>
+<a id="parsing" class="anchor" href="#parsing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parsing</h3>
+
+<p>The object model is constructed around a directed graph that represents the multiplicon tree, using the <code>network.DiGraph()</code> object. Nodes represent multiplicons, and each edge represents a parent-child relationship. A local <a href="http://www.sqlite.org/">SQLite</a> database is constructed (in memory, by default) to hold multiplicon attributes, obtained from the <code>multiplicons.txt</code> and <code>segments.txt</code> files, and enable fast querying.</p>
+        </section>
+
+        <footer>
+          Pyadhore is maintained by <a href="https://github.com/widdowquinn">widdowquinn</a><br>
+          This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
